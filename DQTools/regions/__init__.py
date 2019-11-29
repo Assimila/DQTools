@@ -51,7 +51,7 @@ def get_bounds(region):
             # Open the config file in the same directory and extract all
             # the bounds data
             with open(op.join(path, "regions.yaml")) as f:
-                bounds_data = yaml.load(f)
+                bounds_data = yaml.load(f, Loader=yaml.FullLoader)
 
             # Extract the bounds for this region
             try:
