@@ -7,7 +7,7 @@ from multiprocessing import Process
 import signal
 
 wkspace_root = op.normpath(op.join(__file__, '../../../'))
-sys.path.insert(0, op.join(wkspace_root,'datacube'))
+sys.path.insert(0, op.join(wkspace_root, 'datacube'))
 
 import src.datacube.dataserver.run_server as serv
 from test.datacube_test_harness.logfile_handler import LogTestHandler
@@ -15,9 +15,9 @@ from test.datacube_test_harness.test_harness import DatacubeTestHarness
 
 from DQTools.dataset import Dataset
 
-# TODO this is the starter class for proper tests of DQTools' exceptions
+# TODO this is the starter class for proper tests of DQTools in normal use
 
-class TestDQToolExceptions(object):
+class TestDQToolNormalUse(object):
     keyfile = None
 
     @classmethod
@@ -36,7 +36,7 @@ class TestDQToolExceptions(object):
                 op.abspath(op.join(op.dirname(__file__),
                                    "../connect/log/logging_config.yml")))
         # back up the original file, load, alter and write back out
-        cls.log_helper.setup_test_logging('Test_DQTools_Exceptions')
+        cls.log_helper.setup_test_logging('Test_DQTools_NormalUse')
 
         # Set up a test server
         # =================================================================== #
@@ -49,8 +49,8 @@ class TestDQToolExceptions(object):
         # =================================================================== #
 
         # Our tests will need a full permission keyfile
-        cls.keyfile = op.abspath(op.join(wkspace_root,
-                 "datacube/test/http_tests/.assimila_dq"))
+        cls.keyfile = op.abspath(op.join(
+                wkspace_root, "datacube/test/http_tests/.assimila_dq"))
 
     @classmethod
     def start_server(cls):
@@ -71,6 +71,10 @@ class TestDQToolExceptions(object):
         # Remove the DQ_TESTS environment variable
         cls.dth = None
 
-# To test, copy failure keyfiles from the http_tests and ensure the correct
-# exceptions are thrown
-# Also, try to get products etc which don't exist in the dummy database.
+    def test_retrieve_dataset(self):
+        d = Dataset('dummy_product', 'subdummy1')
+        expected_tiles = ['dummy_east', 'dummy_west']
+        ns.assert_list_equal(expected_tiles.sort(),
+                             d.all_subproduct_tiles.sort())
+        ns.assert_equal('1D',
+                        d.time_resolution)
