@@ -19,7 +19,7 @@ class Dataset:
     """
 
     def __init__(self, product, subproduct, region=None, tile=None, res=None,
-                 identfile=None, sysfile=None):
+                 identfile=None, sysfile=None,raise_exceptions=False):
         """
         Connect to the datacube and extract metadata for this particular
         product/sub-product.
@@ -80,6 +80,9 @@ class Dataset:
 
         # Write tile as an attribute
         self.tile = tile
+
+        # throw exceptions on error
+        self.raise_exceptions = raise_exceptions 
 
         # Create empty attributes for later data
         self.last_timestep = None
@@ -337,16 +340,20 @@ Data:
             self.data = data[0]
 
         except Exception as e:
+            print_msg = ""
             if not use_dask:
                 self.logger.error("Failed to retrieve Dataset sub-product data.\n"
                                   "%s" % e)
-                print("Failed to retrieve Dataset sub-product data, "
-                      "please see logfile for details.")
+                print_msg = ("Failed to retrieve Dataset sub-product data,",
+                            "please see logfile for details.")
             else:
                 self.logger.error("Failed to retrieve Dataset sub-product DASK "
                                   "pointer.\n%s" % e)
-                print("Failed to retrieve Dataset sub-product DASK pointer, "
-                      "please see logfile for details.")
+                print_msg = ("Failed to retrieve Dataset sub-product DASK pointer, ",
+                            "please see logfile for details.")
+            print (print_msg)
+            if self.raise_exceptions:
+                raise Exception(print_msg) from None
 
     def put(self, tile=None):
         """
@@ -404,9 +411,11 @@ Data:
             conn.put_subproduct_data(data=self.data)
 
         except Exception as e:
-            self.logger.error("Failed to write data to the datacube.\n"
-                              "%s" % e)
-            print("Failed to write data to the datacube.")
+            msg = "Failed to write data to the datacube."
+            self.logger.error(f"{msg}.\n{str(e)}")
+            print(msg)
+            if self.raise_exceptions:
+                raise Exception(msg) from None
 
     def update(self, script, params=None):
         """
@@ -436,7 +445,10 @@ Data:
         except Exception as e:
             self.logger.error("Failed to update the Dataset from script %s.\n"
                               "%s" % (e, script))
-            print("Failed to update the Dataset from script %s" % script)
+            msg = "Failed to update the Dataset from script %s" % script
+            print(msg)
+            if self.raise_exceptions:
+                raise Exception(msg) from None
 
     def calculate_timesteps(self):
         """
