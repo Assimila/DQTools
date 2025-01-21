@@ -1,0 +1,51 @@
+# This matches staging machine:
+# subprouct            product                     tile.               tilename in tiles.yaml (optional)
+# added 0p05 to next two:
+ arc2                      , rfe                 , ecmwf_0p1_africa
+ chirps                    , rfe                 , chirps_africa, chirps_0p05_africa
+ chirps                    , rfe                 , chirps_colombia, chirps_0p05_colombia
+ ecmwf_operational_archive , skt                 , ecmwf_0p1_africa
+ ecmwf_operational_archive , t2m                 , ecmwf_0p1_africa
+# era5                      , d2m                 , era5_africa # not a valid combo
+ era5                      , d2m                 , era5_colombia
+# era5                      , land_sea_mask       , era5_africa    # one layer
+# era5                      , land_sea_mask       , era5_colombia  # one layer
+ era5                      , skt                 , era5_africa
+ era5                      , skt                 , era5_colombia
+ era5                      , skt                 , era5_europe
+ era5                      , skt_ensemble_mean   , era5_africa_ensemble
+ era5                      , skt_ensemble_mean   , era5_colombia_ensemble
+ era5                      , skt_ensemble_spread , era5_africa_ensemble
+ era5                      , skt_ensemble_spread , era5_colombia_ensemble
+# era5                      , src                 , era5_africa    # No such thing
+# era5                      , ssrd                , era5_africa    # No such thing
+# era5                      , ssrd                , era5_europe    # No such thing
+ era5                      , t2m                 , era5_africa
+ era5                      , t2m                 , era5_colombia
+ era5                      , t2m_ensemble_spread , era5_africa_ensemble
+ era5                      , t2m_ensemble_spread , era5_colombia_ensemble
+# era5                      , tp                  , era5_africa     # No such thing
+# era5                      , tp                  , era5_colombia   # No such thing
+# era5                      , tp                  , era5_europe     # No such thing
+# era5                      , u10                 , era5_africa
+# era5                      , u10                 , era5_colombia
+# era5                      , u10                 , era5_europe
+# era5                      , v10                 , era5_africa
+# era5                      , v10                 , era5_colombia
+# era5                      , v10                 , era5_europe
+ era5_land                 , d2m                 , ecmwf_0p1_africa
+ era5_land                 , d2m                 , ecmwf_0p1_colombia
+# era5_land                 , land_sea_mask       , ecmwf_0p1_africa   # one layer
+# era5_land                 , land_sea_mask       , ecmwf_0p1_colombia # one layer
+ era5_land                 , skt                 , ecmwf_0p1_africa
+ era5_land                 , skt                 , ecmwf_0p1_colombia
+ era5_land                 , t2m                 , ecmwf_0p1_africa
+ era5_land                 , t2m                 , ecmwf_0p1_colombia
+# gfs                       , skt                 , gfs_africa         # No files after Auguest 2020- but there are later db entries??
+# gfs                       , t2m                 , gfs_africa         # No files after Auguest 2020- but there are later db entries??
+ gpm                       , rfe                 , gpm_0p1_afr
+ gpm                       , rfe                 , gpm_0p1_col
+ gpm                       , rfe_error           , gpm_0p1_afr
+ gpm                       , rfe_error           , gpm_0p1_col
+ tamsat                    , rfe                 , tamsat_extent
+ tamsat                    , rfe_filled          , tamsat_extent
