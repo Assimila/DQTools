@@ -351,9 +351,10 @@ Data:
                                   "pointer.\n%s" % e)
                 print_msg = ("Failed to retrieve Dataset sub-product DASK pointer, ",
                             "please see logfile for details.")
-            print (print_msg)
             if self.raise_exceptions:
                 raise Exception(print_msg) from None
+            else:
+                print (print_msg)
 
     def put(self, tile=None):
         """
@@ -413,9 +414,10 @@ Data:
         except Exception as e:
             msg = "Failed to write data to the datacube."
             self.logger.error(f"{msg}.\n{str(e)}")
-            print(msg)
             if self.raise_exceptions:
                 raise Exception(msg) from None
+            else:
+                print(msg)
 
     def update(self, script, params=None):
         """
@@ -446,9 +448,10 @@ Data:
             self.logger.error("Failed to update the Dataset from script %s.\n"
                               "%s" % (e, script))
             msg = "Failed to update the Dataset from script %s" % script
-            print(msg)
             if self.raise_exceptions:
                 raise Exception(msg) from None
+            else:
+                print(msg)
 
     def calculate_timesteps(self):
         """
