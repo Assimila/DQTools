@@ -66,6 +66,15 @@ class Dataset:
 
         :param sysfile: location of the deployed system's yaml file. Required
                         for DASK use.
+
+        :param raise_exceptions: This controls behaviour when an error occurs 
+                        during a subsequent call to get_data, put or update. 
+                        If True: 
+                            an exception of type Exception will be raised, 
+                            whose text describes the error.
+                        If False:
+                            No exception is raised, the error message is 
+                            printed to stdout.
         """
 
         # write product & sub-product as attributes
