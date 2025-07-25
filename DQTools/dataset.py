@@ -66,6 +66,15 @@ class Dataset:
 
         :param sysfile: location of the deployed system's yaml file. Required
                         for DASK use.
+
+        :param raise_exceptions: This controls behaviour when an error occurs 
+                        during a subsequent call to get_data, put or update. 
+                        If True: 
+                            an exception of type Exception will be raised, 
+                            whose text describes the error.
+                        If False:
+                            No exception is raised, the error message is 
+                            printed to stdout.
         """
 
         # write product & sub-product as attributes
@@ -351,9 +360,10 @@ Data:
                                   "pointer.\n%s" % e)
                 print_msg = ("Failed to retrieve Dataset sub-product DASK pointer, ",
                             "please see logfile for details.")
-            print (print_msg)
             if self.raise_exceptions:
                 raise Exception(print_msg) from None
+            else:
+                print (print_msg)
 
     def put(self, tile=None):
         """
@@ -413,9 +423,10 @@ Data:
         except Exception as e:
             msg = "Failed to write data to the datacube."
             self.logger.error(f"{msg}.\n{str(e)}")
-            print(msg)
             if self.raise_exceptions:
                 raise Exception(msg) from None
+            else:
+                print(msg)
 
     def update(self, script, params=None):
         """
@@ -446,9 +457,10 @@ Data:
             self.logger.error("Failed to update the Dataset from script %s.\n"
                               "%s" % (e, script))
             msg = "Failed to update the Dataset from script %s" % script
-            print(msg)
             if self.raise_exceptions:
                 raise Exception(msg) from None
+            else:
+                print(msg)
 
     def calculate_timesteps(self):
         """
