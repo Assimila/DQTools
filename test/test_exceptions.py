@@ -10,33 +10,49 @@ wkspace_root = op.normpath(op.join(__file__, '../../../'))
 sys.path.insert(0, op.join(wkspace_root,'datacube'))
 
 import src.datacube.dataserver.run_server as serv
-from test.datacube_test_harness.logfile_handler import LogTestHandler
-from test.datacube_test_harness.test_harness import DatacubeTestHarness
+from src.datacube.archiver import Archiver
+from src.datacube.dq_database.registration_manager import RegistrationManager
+from test.datacube_tests.test_dataset.register_test_dataset import Dummy
+import test.database_helpers as db
 
-from DQTools.dataset import Dataset
-
-# TODO this is the starter class for proper tests of DQTools' exceptions
 
 class TestDQToolExceptions(object):
+    dq_permissions_file = None
+    connect_file = None
+    connect_sub_file = None
+    archiver = None
+    reg = None
     keyfile = None
 
     @classmethod
     def setup_class(cls):
-        # Set up the test harness - this will use the test system settings
-        # i.e. a prise_test database on localhost
-        cls.dth = DatacubeTestHarness()
-        # Create a clean test database
-        cls.dth.rebuild_database(cls.dth.get_test_config_yaml(), level='full')
-        # Put the dummy product and its sub-products into the database
-        cls.dth.load_test_data(dataset='dummy')
-        # Add a load of test users
-        cls.dth.load_test_users()
+        cls.dq_permissions_file = op.abspath(op.join(wkspace_root,
+                "datacube/test/datacube_tests/manager_tests/DQ_permissions.yaml"))
 
-        cls.log_helper = LogTestHandler(
-                op.abspath(op.join(op.dirname(__file__),
-                                   "../connect/log/logging_config.yml")))
-        # back up the original file, load, alter and write back out
-        cls.log_helper.setup_test_logging('Test_DQTools_Exceptions')
+        # Set up the test database
+        # - to control the connection details, set the two file identities
+        cls.connect_file = op.abspath(op.join(wkspace_root,
+                "datacube/src/datacube/dq_database/dq_DB_conf/db_settings.yaml"))
+
+        cls.connect_sub_file = op.abspath(op.join(wkspace_root,
+                "datacube/test/datacube_tests/db_settings.yaml"))
+
+        # - substitute the DB connection information to use a test server i.e.
+        # the local file for the 'real' one - this sets it up for
+        # any subsequent connection by other objects.
+        # -- get our own connection to the test server
+        dbconn = db.setup_test_db_connection(cls.connect_file,
+                                             cls.connect_sub_file)
+
+        # - create a clean database
+        script = op.abspath(op.join(wkspace_root,
+                 "datacube/test/datacube_tests/database_setup.sql"))
+        db.execute_sql_file(script, dbconn)
+
+        # - put the dummy product and sub-products into the database
+        cls.archiver = Archiver()
+        cls.reg = RegistrationManager()
+        db.register_and_load_dummy_data(cls.archiver, cls.reg)
 
         # Set up a test server
         # =================================================================== #
@@ -65,11 +81,9 @@ class TestDQToolExceptions(object):
         os.kill(cls.server_pid, signal.SIGTERM)
         # =================================================================== #
 
-        # Reinstate the logging config file
-        cls.log_helper.teardown_test_logging()
+        # Reinstate the DB connection information
+        db.teardown_test_db_connection(cls.connect_file)
 
-        # Remove the DQ_TESTS environment variable
-        cls.dth = None
 
 # To test, copy failure keyfiles from the http_tests and ensure the correct
 # exceptions are thrown
